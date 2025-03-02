@@ -1,0 +1,43 @@
+services:
+  postgres:
+    container_name: "management-postgres"
+    image: "postgres:15.6"
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_DB=${POSTGRES_DATABASE_NAME}
+      - POSTGRES_USER=${SPRING_DATASOURCE_USERNAME}
+      - POSTGRES_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+    volumes:
+      - ./data/postgres/data:/var/lib/postgresql/data
+    ports:
+      - '5432:${POSTGRES_DATABASE_PORT}'
+    networks:
+      - management-service-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${SPRING_DATASOURCE_USERNAME}" ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+
+  management_api:
+    container_name: "management-api"
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: 'management-api'
+    env_file:
+      - .env
+    volumes:
+      - ./data/api/data:/data/api/
+    ports:
+      - 8080:8080
+    networks:
+      - management-service-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+networks:
+  management-service-network:
+    driver: bridge
