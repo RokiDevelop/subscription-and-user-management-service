@@ -18,13 +18,13 @@ import java.util.UUID;
 
 @Tag(name = "Subscriptions", description = "Subscription management API")
 @RestController
-@RequestMapping("/users")
+@RequestMapping
 @RequiredArgsConstructor
 public class SubscriptionController {
 
     private final SubscriptionService subscriptionService;
 
-    @PostMapping("/{id}/subscriptions")
+    @PostMapping("/users/{id}/subscriptions")
     @Operation(summary = "Add subscription", responses = {
             @ApiResponse(responseCode = "200", description = "Subscription added successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid input")
@@ -35,7 +35,7 @@ public class SubscriptionController {
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
-    @GetMapping("/{id}/subscriptions")
+    @GetMapping("/users/{id}/subscriptions")
     @Operation(summary = "Get All Active subscriptions by user id", responses = {
             @ApiResponse(responseCode = "200", description = "Fetched active subscriptions")
     })
@@ -44,7 +44,7 @@ public class SubscriptionController {
         return ResponseEntity.ok(result);
     }
 
-    @DeleteMapping("/{id}/subscriptions/{subId}")
+    @DeleteMapping("/users/{id}/subscriptions/{subId}")
     @Operation(summary = "Delete subscription", responses = {
             @ApiResponse(responseCode = "204", description = "Subscription deleted successfully"),
             @ApiResponse(responseCode = "404", description = "Subscription not found")
